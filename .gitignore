@@ -1,11 +1,11 @@
 node_modules
 .DS_Store
 dist
+dev-dist
 .cache
 .turbo
 .nx
 .nx/cache
-
 tests/server/static
 tests/server/static/upload
 

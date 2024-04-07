@@ -2,6 +2,7 @@ import { resolve } from 'node:path';
 import { loadEnv } from 'vite';
 import vueJsx from '@vitejs/plugin-vue-jsx';
 import mkcert from 'vite-plugin-mkcert';
+import { VitePWA } from 'vite-plugin-pwa';
 import vue from '@vitejs/plugin-vue';
 import checker from 'vite-plugin-checker';
 import Components from 'unplugin-vue-components/vite';
@@ -11,7 +12,6 @@ import { createSvgIconsPlugin } from 'vite-plugin-svg-icons';
 import dayjs from 'dayjs';
 import mockServerPlugin from '@admin-pkg/vite-plugin-msw/vite';
 import TinymceResourcePlugin from '@admin-pkg/vite-plugin-tinymce-resource';
-import Http2Proxy from '@admin-pkg/vite-plugin-http2-proxy';
 import pkg from './package.json';
 import type { UserConfig, ConfigEnv } from 'vite';
 
@@ -54,10 +54,36 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
       vueJsx({
         // options are passed on to @vue/babel-plugin-jsx
       }),
+      VitePWA({
+        injectRegister: 'auto',
+        registerType: 'autoUpdate',
+        devOptions: {
+          enabled: true,
+        },
+        includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
+        manifest: {
+          name: 'Vue3 Admin',
+          short_name: 'Vue3 Admin',
+          description: 'Vue3 Admin description',
+          theme_color: '#ffffff',
+          icons: [
+            {
+              src: 'pwa-192x192.png',
+              sizes: '192x192',
+              type: 'image/png',
+            },
+            {
+              src: 'pwa-512x512.png',
+              sizes: '512x512',
+              type: 'image/png',
+            },
+          ],
+        },
+      }),
       // 指定 mkcert 的下载源为 coding，从 coding.net 镜像下载证书
       mkcert({ source: 'coding' }),
       // 开启 http2 代理
-      Http2Proxy(),
+      // Http2Proxy(),
       mockServerPlugin({ build: isBuild && VITE_MOCK_IN_PROD === 'true' }),
       TinymceResourcePlugin({ baseUrl: '/tinymce-resource/' }),
       createSvgIconsPlugin({
